@@ -150,9 +150,6 @@ export default function Login() {
           </form>
 
           <div className="login-footer">
-            <p>Default credentials:</p>
-            <p><strong>Username:</strong> admin</p>
-            <p><strong>Password:</strong> admin123</p>
             <div className="register-link">
               <p>Don't have an account? <Link to="/register">Register with Phone Number</Link></p>
             </div>

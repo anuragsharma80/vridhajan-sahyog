@@ -6,6 +6,7 @@ import "./Register.css";
 
 export default function Register() {
   const [formData, setFormData] = useState({
+    username: "",
     phoneNumber: "",
     password: "",
     confirmPassword: "",
@@ -33,6 +34,11 @@ export default function Register() {
   };
 
   const validateForm = () => {
+    if (!formData.username || formData.username.trim().length < 3) {
+      toast.error("Username must be at least 3 characters long");
+      return false;
+    }
+    
     if (!formData.phoneNumber || formData.phoneNumber.length < 10) {
       toast.error("Please enter a valid 10-digit phone number");
       return false;
@@ -67,6 +73,7 @@ export default function Register() {
 
     try {
       const response = await API.post("/auth/register", {
+        username: formData.username,
         phoneNumber: formData.phoneNumber,
         password: formData.password,
         fullName: formData.fullName,
@@ -74,7 +81,7 @@ export default function Register() {
       });
       
       if (response.data.success) {
-        toast.success("Registration successful! Please login with your phone number.");
+        toast.success("Registration successful! You can now login with your username or phone number.");
         navigate("/login");
       } else {
         toast.error(response.data.message || "Registration failed");
@@ -116,6 +123,21 @@ export default function Register() {
                 disabled={loading}
                 maxLength="10"
                 pattern="[0-9]{10}"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                placeholder="Choose a username (min 3 characters)"
+                required
+                disabled={loading}
+                minLength="3"
               />
             </div>
 
