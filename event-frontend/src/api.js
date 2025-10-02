@@ -43,8 +43,12 @@ API.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Handle 401 errors (token expired)
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Handle 401 errors (token expired) - but not for login/logout endpoints
+    if (error.response?.status === 401 && 
+        !originalRequest._retry && 
+        !originalRequest.url?.includes('/auth/login') &&
+        !originalRequest.url?.includes('/auth/logout')) {
+      
       if (isRefreshing) {
         // If already refreshing, queue this request
         return new Promise((resolve, reject) => {
@@ -82,8 +86,10 @@ API.interceptors.response.use(
         // Refresh failed, redirect to login
         processQueue(refreshError, null);
         
-        // Redirect to login page
-        window.location.href = "/login";
+        // Only redirect if not already on login page
+        if (window.location.pathname !== '/login') {
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

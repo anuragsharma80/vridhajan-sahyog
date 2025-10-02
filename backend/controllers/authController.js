@@ -401,8 +401,19 @@ const logout = async (req, res) => {
       }
     }
 
-    // Clear cookies
-    clearTokenCookies(res);
+    // Clear cookies with proper options
+    res.clearCookie('accessToken', { 
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+    res.clearCookie('refreshToken', { 
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
 
     res.json({
       success: true,
@@ -410,10 +421,13 @@ const logout = async (req, res) => {
     });
   } catch (error) {
     console.error('Logout error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error during logout',
-      error: error.message
+    // Even if there's an error, clear cookies and return success
+    res.clearCookie('accessToken', { path: '/' });
+    res.clearCookie('refreshToken', { path: '/' });
+    
+    res.json({
+      success: true,
+      message: 'Logout completed'
     });
   }
 };

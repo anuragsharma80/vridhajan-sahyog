@@ -88,12 +88,22 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = async () => {
     try {
-      await API.post('/auth/logout');
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
+      // Clear authentication state immediately to prevent loops
       setIsAuthenticated(false);
       setUser(null);
+      setIsLoading(false);
+      
+      // Call logout endpoint to clear server-side session
+      await API.post('/auth/logout');
+      
+      // Navigate to login page
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if logout fails, ensure we clear local state and navigate
+      setIsAuthenticated(false);
+      setUser(null);
+      setIsLoading(false);
       navigate('/login');
     }
   };
@@ -131,10 +141,15 @@ export const AuthProvider = ({ children }) => {
     const interceptor = API.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401) {
+        // Only handle 401 errors for non-auth endpoints to prevent loops
+        if (error.response?.status === 401 && 
+            !error.config?.url?.includes('/auth/login') &&
+            !error.config?.url?.includes('/auth/logout') &&
+            !error.config?.url?.includes('/auth/refresh')) {
           // Token expired or invalid, logout user
           setIsAuthenticated(false);
           setUser(null);
+          setIsLoading(false);
           navigate('/login');
         }
         return Promise.reject(error);

@@ -38,7 +38,9 @@ if not exist "package.json" (
     pause
     goto menu
 )
-npm run dev
+start "Backend Server" cmd /k "cd /d %~dp0backend && npm start"
+timeout /t 3 /nobreak >nul
+start "Frontend Server" cmd /k "cd /d %~dp0event-frontend && npm start"
 pause
 goto menu
 
@@ -52,7 +54,7 @@ if not exist "package.json" (
     pause
     goto menu
 )
-npm start
+start "Backend Server" cmd /k "npm start"
 pause
 goto menu
 
@@ -66,7 +68,7 @@ if not exist "package.json" (
     pause
     goto menu
 )
-npm start
+start "Frontend Server" cmd /k "npm start"
 pause
 goto menu
 
