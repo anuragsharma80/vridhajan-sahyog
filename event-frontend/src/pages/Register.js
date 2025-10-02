@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import API from "../api";
+import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
 import "./Register.css";
 
@@ -17,13 +17,15 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { register, isAuthenticated } = useAuth();
 
   // Check if user is already logged in
   useEffect(() => {
-    // With HttpOnly cookies, we can't check token existence on client side
-    // The API interceptor will handle authentication
-    // For now, we'll let the user access the register page
-  }, [navigate]);
+    if (isAuthenticated) {
+      // If user is already authenticated, redirect to dashboard
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,7 +74,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await API.post("/auth/register", {
+      const result = await register({
         username: formData.username,
         phoneNumber: formData.phoneNumber,
         password: formData.password,
@@ -80,16 +82,15 @@ export default function Register() {
         email: formData.email || undefined
       });
       
-      if (response.data.success) {
+      if (result.success) {
         toast.success("Registration successful! You can now login with your username or phone number.");
         navigate("/login");
       } else {
-        toast.error(response.data.message || "Registration failed");
+        toast.error(result.message || "Registration failed");
       }
     } catch (error) {
       console.error("Registration error:", error);
-      const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
-      toast.error(errorMessage);
+      toast.error("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }

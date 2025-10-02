@@ -170,32 +170,48 @@ const Reports = () => {
     }
 
     try {
-      // Prepare data for Excel export
+      // Prepare comprehensive data for Excel export
       const exportData = filteredDonors.map((donor, index) => ({
         'Rank': index + 1,
         'Donor Name': donor.memberName || '',
-        'Amount': parseFloat(donor.totalAmount) || 0,
-        'Date': donor.lastDonationDate ? formatDate(donor.lastDonationDate) : '',
+        'Father/Husband Name': donor.fatherHusbandName || '',
+        'Registration No': donor.regNo || '',
+        'Dani Member No': donor.daniMemberNo || '',
+        'Total Amount': parseFloat(donor.totalAmount) || 0,
+        'Receipt Count': donor.receiptCount || 0,
+        'Last Donation Date': donor.lastDonationDate ? formatDate(donor.lastDonationDate) : '',
+        'First Donation Date': donor.firstDonationDate ? formatDate(donor.firstDonationDate) : '',
+        'Address Line 1': donor.addr1 || '',
+        'Address Line 2': donor.addr2 || '',
         'City': donor.city || '',
         'State': donor.state || '',
-        'Registration No': donor.regNo || '',
-        'Dani Member No': donor.daniMemberNo || ''
+        'Pin Code': donor.pinCode || '',
+        'Phone Number': donor.mobileNumber || '',
+        'Email': donor.email || ''
       }));
 
       // Create workbook and worksheet
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(exportData);
 
-      // Set column widths
+      // Set column widths for comprehensive export
       const colWidths = [
         { wch: 8 },   // Rank
         { wch: 25 },  // Donor Name
-        { wch: 15 },  // Amount
-        { wch: 20 },  // Date
+        { wch: 25 },  // Father/Husband Name
+        { wch: 15 },  // Registration No
+        { wch: 18 },  // Dani Member No
+        { wch: 15 },  // Total Amount
+        { wch: 15 },  // Receipt Count
+        { wch: 20 },  // Last Donation Date
+        { wch: 20 },  // First Donation Date
+        { wch: 30 },  // Address Line 1
+        { wch: 30 },  // Address Line 2
         { wch: 20 },  // City
         { wch: 20 },  // State
-        { wch: 15 },  // Registration No
-        { wch: 18 }   // Dani Member No
+        { wch: 12 },  // Pin Code
+        { wch: 15 },  // Phone Number
+        { wch: 30 }   // Email
       ];
       ws['!cols'] = colWidths;
 
@@ -373,6 +389,9 @@ const Reports = () => {
             <div className="table-header-row">
               <div className="col-rank">Rank</div>
               <div className="col-name">Donor Name</div>
+              <div className="col-dani-member">Dani Member No</div>
+              <div className="col-reg-no">Reg No</div>
+              <div className="col-phone">Phone</div>
               <div className="col-amount">Amount</div>
               <div className="col-date">Date</div>
               <div className="col-location">Location</div>
@@ -393,6 +412,15 @@ const Reports = () => {
                   >
                     <div className="donor-name">{donor.memberName}</div>
                   </Link>
+                </div>
+                <div className="col-dani-member">
+                  <div className="dani-member-no">{donor.daniMemberNo || '-'}</div>
+                </div>
+                <div className="col-reg-no">
+                  <div className="reg-no">{donor.regNo || '-'}</div>
+                </div>
+                <div className="col-phone">
+                  <div className="phone-number">{donor.mobileNumber || '-'}</div>
                 </div>
                 <div className="col-amount">
                   <div className="amount">{formatCurrency(donor.totalAmount)}</div>

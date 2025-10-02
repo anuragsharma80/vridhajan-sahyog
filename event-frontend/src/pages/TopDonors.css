@@ -318,8 +318,8 @@
 
 .table-header-row {
   display: grid;
-  grid-template-columns: 60px 1fr 1fr 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 60px 1fr 120px 100px 120px 1fr 1fr 1fr;
+  gap: 12px;
   padding: 12px 16px;
   background: #f9fafb;
   font-weight: 600;
@@ -332,8 +332,8 @@
 
 .table-row {
   display: grid;
-  grid-template-columns: 60px 1fr 1fr 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 60px 1fr 120px 100px 120px 1fr 1fr 1fr;
+  gap: 12px;
   padding: 12px 16px;
   border-bottom: 1px solid #f3f4f6;
   font-size: 13px;
@@ -381,6 +381,27 @@
 
 .rank-other {
   background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+}
+
+/* New Column Styles */
+.col-dani-member,
+.col-reg-no,
+.col-phone {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.dani-member-no,
+.reg-no,
+.phone-number {
+  font-family: 'Courier New', monospace;
+  background-color: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  font-size: 11px;
 }
 
 /* Donor Info */
@@ -595,6 +616,22 @@
   .last-donation {
     align-self: flex-start;
   }
+
+  /* Mobile styles for new columns */
+  .col-rank:before { content: "Rank: "; }
+  .col-name:before { content: "Donor Name: "; }
+  .col-dani-member:before { content: "Dani Member No: "; }
+  .col-reg-no:before { content: "Reg No: "; }
+  .col-phone:before { content: "Phone: "; }
+  .col-amount:before { content: "Amount: "; }
+  .col-date:before { content: "Date: "; }
+  .col-location:before { content: "Location: "; }
+
+  .table-row > div:before {
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -666,8 +703,8 @@
 
   .table-header-row,
   .table-row {
-    grid-template-columns: 50px 1fr 1fr 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: 50px 1fr 100px 80px 100px 1fr 1fr 1fr;
+    gap: 10px;
   }
 }
 

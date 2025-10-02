@@ -96,16 +96,23 @@ const getTopDonors = async (req, res) => {
           'memberDetails.isActive': true
         }
       },
-      // Project final structure
+      // Project final structure with enhanced member details
       {
         $project: {
           _id: 0,
           memberId: '$_id',
           universalKey: '$memberDetails.universalKey',
           regNo: '$memberDetails.regNo',
+          daniMemberNo: '$memberDetails.daniMemberNo',
           memberName: '$memberDetails.memberName',
+          fatherHusbandName: '$memberDetails.fatherHusbandName',
           city: '$memberDetails.address.city',
           state: '$memberDetails.address.state',
+          addr1: '$memberDetails.address.addr1',
+          addr2: '$memberDetails.address.addr2',
+          pinCode: '$memberDetails.address.pinCode',
+          mobileNumber: '$memberDetails.contact.mob1',
+          email: '$memberDetails.contact.email',
           totalAmount: 1,
           receiptCount: 1,
           lastDonationDate: 1,

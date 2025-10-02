@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe, updateProfile, refreshToken, logout, logoutAll } = require('../controllers/authController');
+const { register, login, getMe, updateProfile, refreshToken, logout, logoutAll, verify } = require('../controllers/authController');
 const auth = require('../middleware/auth');
 
 // @route   POST /api/auth/register
@@ -17,6 +17,11 @@ router.post('/login', login);
 // @desc    Refresh access token
 // @access  Public
 router.post('/refresh', refreshToken);
+
+// @route   GET /api/auth/verify
+// @desc    Verify user authentication status
+// @access  Private
+router.get('/verify', auth, verify);
 
 // @route   GET /api/auth/me
 // @desc    Get current user profile

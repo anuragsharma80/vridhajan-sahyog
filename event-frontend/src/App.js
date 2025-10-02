@@ -10,6 +10,8 @@ import ReceiptEntry from "./pages/ReceiptEntry";
 import Reports from "./pages/TopDonors";
 import Navbar from "./components/Navbar";
 import SessionTimeout from "./components/SessionTimeout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,20 +20,48 @@ function AppContent() {
   const hideNavbar = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/dashboard';
   const isAuthenticatedPage = !(location.pathname === '/login' || location.pathname === '/register');
 
+  console.log('🚀 AppContent rendering, location:', location.pathname);
+
   return (
     <>
       {!hideNavbar && <Navbar />}
       
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/member-entry" element={<MemberEntry />} />
-        <Route path="/member-list" element={<MemberList />} />
-        <Route path="/member-profile/:daniMemberNo" element={<MemberProfile />} />
-        <Route path="/receipt-entry" element={<ReceiptEntry />} />
-        <Route path="/reports" element={<Reports />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        {/* Protected Routes */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/member-entry" element={
+          <ProtectedRoute>
+            <MemberEntry />
+          </ProtectedRoute>
+        } />
+        <Route path="/member-list" element={
+          <ProtectedRoute>
+            <MemberList />
+          </ProtectedRoute>
+        } />
+        <Route path="/member-profile/:daniMemberNo" element={
+          <ProtectedRoute>
+            <MemberProfile />
+          </ProtectedRoute>
+        } />
+        <Route path="/receipt-entry" element={
+          <ProtectedRoute>
+            <ReceiptEntry />
+          </ProtectedRoute>
+        } />
+        <Route path="/reports" element={
+          <ProtectedRoute>
+            <Reports />
+          </ProtectedRoute>
+        } />
       </Routes>
 
       {/* Session Timeout Component - only show on authenticated pages */}
@@ -46,7 +76,9 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

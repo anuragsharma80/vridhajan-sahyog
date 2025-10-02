@@ -446,6 +446,46 @@ const logoutAll = async (req, res) => {
   }
 };
 
+// @desc    Verify user authentication status
+// @route   GET /api/auth/verify
+// @access  Private
+const verify = async (req, res) => {
+  try {
+    // If we reach here, the user is authenticated (middleware passed)
+    const user = await User.findById(req.user.id).select('-password -refreshTokens');
+    
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'User is authenticated',
+      data: {
+        user: {
+          id: user._id,
+          username: user.username,
+          phoneNumber: user.phoneNumber,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          createdAt: user.createdAt
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Verify error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during verification',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -453,5 +493,6 @@ module.exports = {
   updateProfile,
   refreshToken,
   logout,
-  logoutAll
+  logoutAll,
+  verify
 };

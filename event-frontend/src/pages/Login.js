@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import API from "../api";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
 import "./Login.css";
 
@@ -14,13 +14,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
 
   // Check if user is already logged in
   useEffect(() => {
-    // With HttpOnly cookies, we can't check token existence on client side
-    // The API interceptor will handle authentication
-    // For now, we'll let the user access the login page
-  }, [navigate]);
+    if (isAuthenticated) {
+      // If user is already authenticated, redirect to the page they were trying to access
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location.state]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,20 +49,19 @@ export default function Login() {
         loginData.phoneNumber = formData.phoneNumber;
       }
       
-      const response = await API.post("/auth/login", loginData);
+      const result = await login(loginData);
       
-      if (response.data.success) {
-        // Tokens are now stored in secure HttpOnly cookies
-        // No need to store token in localStorage for new secure system
+      if (result.success) {
         toast.success("Login successful!");
-        navigate("/dashboard");
+        // Redirect to the page they were trying to access, or dashboard
+        const from = location.state?.from?.pathname || '/dashboard';
+        navigate(from, { replace: true });
       } else {
-        toast.error(response.data.message || "Login failed");
+        toast.error(result.message || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
-      const errorMessage = error.response?.data?.message || "Login failed. Please try again.";
-      toast.error(errorMessage);
+      toast.error("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }

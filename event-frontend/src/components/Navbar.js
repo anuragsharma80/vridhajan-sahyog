@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import API from '../api';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import './Navbar.css';
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      // Call the secure logout endpoint
-      await API.post('/auth/logout');
+      await logout();
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
-      // Even if logout fails, clear local storage and redirect
-      toast.error('Logout failed, but session cleared locally');
-    } finally {
-      // Clear any stored tokens
-      localStorage.removeItem('token');
-      navigate('/login');
+      toast.error('Logout failed');
     }
   };
 
